@@ -824,19 +824,20 @@ footer{border-top:1px solid var(--line);background:rgba(5,7,12,.7);padding:64px 
 
 <script>
 const COMMAND_OWNER = {
+  id: 9495573455,
   name: "KongkiadPromlamda",
   img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-BD09CF9A13467C2ECEB2F1335E82337F-Png/420/420/AvatarHeadshot/Png/noFilter"
 };
 
 const COMMAND_ADMINS = [
-  { name: "TNnamnow", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-AB228201517E6B7283799B9E46699F67-Png/420/420/AvatarHeadshot/Png/noFilter" },
-  { name: "chokun12534", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-0D6FAA2C8534712CA899C85BEBD8044E-Png/420/420/AvatarHeadshot/Png/noFilter" },
-  { name: "asuul303", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-905CF9F3A3C91C78DCB2845F1541F8BB-Png/420/420/AvatarHeadshot/Png/noFilter" },
-  { name: "candykungg", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-CF253A1DC8B0D9F9C89E5790144E02D4-Png/420/420/AvatarHeadshot/Png/noFilter" },
-  { name: "Jainztoe", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-8122ED0D956123E2CA317900F52F2108-Png/420/420/AvatarHeadshot/Png/noFilter" },
-  { name: "Loma2133", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-9023436C62A987D283A00429CE563279-Png/420/420/AvatarHeadshot/Png/noFilter" },
-  { name: "bunyasak82", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-EAE19B1AA6540FB4967AE9AAF5542B36-Png/420/420/AvatarHeadshot/Png/noFilter" },
-  { name: "HEe1234463", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-22A888DFC1254166BABC185BCA4E2EFF-Png/420/420/AvatarHeadshot/Png/noFilter" }
+  { id: 1200584427, name: "TNnamnow", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-AB228201517E6B7283799B9E46699F67-Png/420/420/AvatarHeadshot/Png/noFilter" },
+  { id: 4165885869, name: "chokun12534", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-0D6FAA2C8534712CA899C85BEBD8044E-Png/420/420/AvatarHeadshot/Png/noFilter" },
+  { id: 8833268593, name: "asuul303", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-905CF9F3A3C91C78DCB2845F1541F8BB-Png/420/420/AvatarHeadshot/Png/noFilter" },
+  { id: 3970689639, name: "candykungg", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-CF253A1DC8B0D9F9C89E5790144E02D4-Png/420/420/AvatarHeadshot/Png/noFilter" },
+  { id: 9987273028, name: "Jainztoe", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-8122ED0D956123E2CA317900F52F2108-Png/420/420/AvatarHeadshot/Png/noFilter" },
+  { id: 3044326334, name: "Loma2133", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-9023436C62A987D283A00429CE563279-Png/420/420/AvatarHeadshot/Png/noFilter" },
+  { id: 5601914177, name: "bunyasak82", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-EAE19B1AA6540FB4967AE9AAF5542B36-Png/420/420/AvatarHeadshot/Png/noFilter" },
+  { id: 8160156298, name: "HEe1234463", img: "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-22A888DFC1254166BABC185BCA4E2EFF-Png/420/420/AvatarHeadshot/Png/noFilter" }
 ];
 
 const cmdGrid = document.getElementById("cmdGrid");
@@ -863,6 +864,7 @@ if (cmdGrid) {
   function buildCard(person, roleTh, roleEn, extraClass, idx){
     const el = document.createElement("div");
     el.className = "cmd-card reveal d" + (idx % 3 + 1) + (extraClass ? " " + extraClass : "");
+    el.dataset.userId = person.id || "";
     el.appendChild(avatarNode(person));
     const username = document.createElement("span");
     username.className = "cmd-role";
@@ -880,6 +882,20 @@ if (cmdGrid) {
   }
   cmdGrid.appendChild(buildCard(COMMAND_OWNER, "เจ้าของเซิร์ฟเวอร์", "Server Owner", "owner-card", 0));
   COMMAND_ADMINS.forEach((m, i) => cmdGrid.appendChild(buildCard(m, "ผู้ดูแลเซิร์ฟเวอร์", "Server Admin", "", i + 1)));
+
+  const avatarIds = [COMMAND_OWNER].concat(COMMAND_ADMINS).map(m => m.id).filter(Boolean).join(",");
+  fetch("/api/avatars?ids=" + avatarIds)
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(data => {
+      const fresh = {};
+      (data.data || []).forEach(t => { if (t.state === "Completed" && t.imageUrl) fresh[t.targetId] = t.imageUrl; });
+      cmdGrid.querySelectorAll("[data-user-id]").forEach(card => {
+        const img = card.querySelector(".cmd-avatar img");
+        const url = fresh[card.dataset.userId];
+        if (img && url && img.src !== url) img.src = url;
+      });
+    })
+    .catch(() => {});
 }
 
 const clockEl = document.getElementById("clock");
