@@ -230,6 +230,8 @@ section{padding:96px 0;position:relative}
 }
 .board-head .live{display:inline-flex;align-items:center;gap:7px;color:var(--green);font-size:11px;letter-spacing:.25em}
 .board-head .live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px rgba(52,211,153,.9);animation:pulse 2s infinite}
+.board-head .live.standby{color:var(--amber)}
+.board-head .live.standby::before{background:var(--amber);box-shadow:0 0 10px rgba(255,176,46,.9)}
 .board-row{
   display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid var(--line);
   transition:background .25s,transform .25s;
@@ -516,13 +518,14 @@ footer{border-top:1px solid var(--line);background:rgba(5,7,12,.7);padding:64px 
   </nav>
 </header>
 
+<div class="notice-bar">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9V4.5M12 9 4.8 20h14.4L12 9z"/><circle cx="12" cy="3" r="1.2"/></svg>
+  <span>เซิร์ฟเวอร์ Roleplay กำลังจะเปิด — <b>ยังไม่เปิดรับสมัครหน่วยงาน</b> ขณะนี้เข้าดิสคอร์ดเพื่อติดตามข่าวสารได้ปกติ</span>
+</div>
+
 <main>
 <section class="hero" id="home">
   <div class="beams" aria-hidden="true"></div>
-  <div class="notice-bar">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9V4.5M12 9 4.8 20h14.4L12 9z"/><circle cx="12" cy="3" r="1.2"/></svg>
-    <span>เซิร์ฟเวอร์ Roleplay กำลังจะเปิด — <b>ยังไม่เปิดรับสมัครหน่วยงาน</b> ขณะนี้เข้าดิสคอร์ดเพื่อติดตามข่าวสารได้ปกติ</span>
-  </div>
   <div class="container hero-grid">
     <div class="hero-copy">
       <div class="chips">
@@ -559,7 +562,7 @@ footer{border-top:1px solid var(--line);background:rgba(5,7,12,.7);padding:64px 
     <aside class="hero-board reveal" aria-label="สถานะหน่วยงาน">
       <div class="board-head">
         <span>Unit Board — THRP</span>
-        <span class="live" style="color:var(--amber)">Standby</span>
+        <span class="live standby">Standby</span>
       </div>
       <div class="board-row">
         <span class="board-bar" style="background:#38bdf8"></span>
